@@ -224,11 +224,11 @@ public:
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 18444;
         strDataDir = "regtest";
-        //*****************************************************************
+        //=====================================================================
         
         std::cout << "RegTest Block is: " << genesis.ToString() << std::endl;
         
-        //*******************************************************************
+        //=====================================================================
         assert(hashGenesisBlock == uint256(""));
 
         vSeeds.clear();  // Regtest mode doesn't have any DNS seeds.

@@ -50,13 +50,17 @@ static const int64_t MIN_TX_FEE = 10000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** No transaction amount larger than this (in satoshi) is valid */
-static const int64_t MAX_MONEY = 10000000 * COIN;
+static const int64_t MAX_MONEY = std::numeric_limits<int64_t>::max();
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
+static const int64_t ONE_YEAR_BLOCKS = 525600;
+static const int64_t LAST_POW_YEARS = 5;
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
-static const int LAST_POW_BLOCK = 1300;
-static const int POW_BLOCK_REWARD = 100000;
+static const int LAST_POW_BLOCK = ONE_YEAR_BLOCKS * LAST_POW_YEARS;
+static const int POW_BLOCK_REWARD = 20;
+static const int64_t COIN_YEAR_REWARD = 4 * CENT; // 4% per year
+static const int64_t PREMINE = 1578400000;
 
 inline bool IsProtocolV1RetargetingFixed(int nHeight) { return true; }
 inline bool IsProtocolV2(int nHeight) { return true; }
@@ -65,43 +69,7 @@ inline int64_t FutureDriftV1(int64_t nTime) { return nTime + 10 * 60; }
 inline int64_t FutureDriftV2(int64_t nTime) { return nTime + 15; }
 inline int64_t FutureDrift(int64_t nTime, int nHeight) { return IsProtocolV2(nHeight) ? FutureDriftV2(nTime) : FutureDriftV1(nTime); }
 
-inline unsigned int GetTargetSpacing(int nHeight) { return 128; } // Targetted block spacing in seconds. The P2P network should average to it in the long term.
-
-inline uint64_t GetDynamicBlockHeightPoSAward(uint32_t nHeight) {
-    uint32_t current_year = nHeight / ((60 * 60 * 24 * 365) / GetTargetSpacing(0)) + 1;
-
-    if (current_year <= 2) {
-        return 20 * CENT;
-    } else if (current_year <= 4) {
-        return 10 * CENT;
-    } else if (current_year <= 6) {
-        return 5 * CENT;
-    } else if (current_year <= 8) {
-        return (uint64_t)(2.5 * CENT);
-    } else if (current_year <= 10) {
-        return (uint64_t)(1.25 * CENT);
-    } else if (current_year <= 12) {
-        return (uint64_t)(0.75 * CENT);
-    } else if (current_year <= 14) {
-        return (uint64_t)(0.5 * CENT);
-    } else if (current_year <= 15) {
-        return (uint64_t)(0.25 * CENT);
-    }
-    return (uint64_t)(0.00001 * CENT);
-/*
-    Numerically, the calculated awards (for spacing=128) are:
-    height: 0, award: 20000000
-    height: 492750, award: 10000000
-    height: 985500, award: 5000000
-    height: 1478250, award: 2500000
-    height: 1971000, award: 1250000
-    height: 2463750, award: 750000
-    height: 2956500, award: 500000
-    height: 3449250, award: 250000
-    height: 3695625+, award: 10
-*/
-}
-
+inline unsigned int GetTargetSpacing(int nHeight) { return 60; } // Targetted block spacing in seconds. The P2P network should average to it in the long term.
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
@@ -176,7 +144,7 @@ bool GetNodeStateStats(NodeId nodeid, CNodeStateStats &stats);
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits);
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake);
-int64_t GetProofOfWorkReward(int64_t nFees);
+int64_t GetProofOfWorkReward(int nHeight, int64_t nFees);
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees, uint32_t nBlockHeight);
 bool IsInitialBlockDownload();
 std::string GetWarnings(std::string strFor);

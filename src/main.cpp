@@ -1025,11 +1025,35 @@ static CBigNum GetProofOfStakeLimit(int nHeight)
 }
 
 // miner's coin base reward
-int64_t GetProofOfWorkReward(int64_t nFees)
+int64_t GetProofOfWorkReward(int nHeight,int64_t nFees)
 {
-    int64_t nSubsidy = POW_BLOCK_REWARD * COIN;
+    int64_t nSubsidy = 0;
 
-    LogPrint("creation", "GetProofOfWorkReward() : create=%s nSubsidy=%d\n", FormatMoney(nSubsidy), nSubsidy);
+    if (nHeight <= 1)
+        nSubsidy = PREMINE * COIN;
+    else if(nHeight >= 1 && nHeight < ONE_YEAR_BLOCKS * 4)
+    {
+        nSubsidy = 20 * COIN;
+    }
+    else if(nHeight >= ONE_YEAR_BLOCKS * 4 && nHeight < ONE_YEAR_BLOCKS * 8)
+    {
+        nSubsidy = 10 * COIN;
+    }
+        else if(nHeight >= ONE_YEAR_BLOCKS * 8 && nHeight < ONE_YEAR_BLOCKS * 12)
+    {
+        nSubsidy = 5 * COIN;
+    }
+        else if(nHeight >= ONE_YEAR_BLOCKS * 12 && nHeight < ONE_YEAR_BLOCKS * 16)
+    {
+        nSubsidy = 2.50 * COIN;
+    }
+        else if(nHeight >= ONE_YEAR_BLOCKS * 16 && nHeight < ONE_YEAR_BLOCKS * 20)
+    {
+        nSubsidy = 1.25 * COIN;
+    }
+
+    if (fDebug && GetBoolArg("-printpriority", false))
+        LogPrintf("GetProofOfWorkReward() : create=%s nSubsidy=%d\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
 
     return nSubsidy + nFees;
 }
@@ -1037,11 +1061,29 @@ int64_t GetProofOfWorkReward(int64_t nFees)
 // miner's coin stake reward based on coin age spent (coin-days)
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees, uint32_t nBlockHeight)
 {
-    uint64_t year_reward = GetDynamicBlockHeightPoSAward(nBlockHeight);
 
-    int64_t nSubsidy = nCoinAge * year_reward * 33 / (365 * 33 + 8);
+    int64_t nDiv = (365 * 33 + 8);
+    int64_t nSubsidy = 0;
 
-    LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
+    if( nBlockHeight < ONE_YEAR_BLOCKS)
+    {
+        nSubsidy = 4 * COIN_YEAR_REWARD * nCoinAge *33 / nDiv;
+    }
+    else if( nBlockHeight < 2 * ONE_YEAR_BLOCKS)
+    {
+        nSubsidy = 3 * COIN_YEAR_REWARD * nCoinAge * 33 / nDiv;
+    }
+    else if ( nBlockHeight < 3 * ONE_YEAR_BLOCKS)
+    {
+        nSubsidy = 2 * COIN_YEAR_REWARD * nCoinAge * 33 / nDiv;
+    }
+    else
+    {
+        nSubsidy = COIN_YEAR_REWARD * nCoinAge * 33 / nDiv;
+    }
+
+    if (fDebug && GetBoolArg("-printpriority", false))
+        LogPrintf("GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy).c_str(), nCoinAge);
 
     return nSubsidy + nFees;
 }
@@ -1523,7 +1565,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 
     if (IsProofOfWork())
     {
-        int64_t nReward = GetProofOfWorkReward(nFees);
+        int64_t nReward = GetProofOfWorkReward(pindex->nHeight, nFees);
         // Check coinbase reward
         if (vtx[0].GetValueOut() > nReward)
             return DoS(50, error("ConnectBlock() : coinbase reward exceeded (actual=%d vs calculated=%d)",
