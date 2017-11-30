@@ -1,0 +1,9 @@
+Building SumCoin
+
+See doc/readme-qt.rst for instructions on building SumCoin QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of SumCoin.
+
+See doc/build-*.txt for instructions on building sumcoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of SumCoin.
