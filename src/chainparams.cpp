@@ -110,7 +110,7 @@ public:
         assert(genesis.hashMerkleRoot == uint256("0x3c46987bbe1bb7baab4aa5962c55245a8590a0576fedc37f6c0263dfd1b94d4a"));
 
         vSeeds.push_back(CDNSSeedData("soompay.net", "14.63.226.166"));
-        //vSeeds.push_back(CDNSSeedData("seed2.sumcoin.io", "seed2.sumcoin.io"));
+        vSeeds.push_back(CDNSSeedData("172.30.1.1", "172.30.1.7"));
         //vSeeds.push_back(CDNSSeedData("seed3.sumcoin.io", "seed3.sumcoin.io"));
         //vSeeds.push_back(CDNSSeedData("seed4.sumcoin.io", "seed4.sumcoin.io"));
         //vSeeds.push_back(CDNSSeedData("seed5.sumcoin.io", "seed5.sumcoin.io"));
