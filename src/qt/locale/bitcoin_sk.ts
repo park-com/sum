@@ -3186,7 +3186,7 @@ napríklad: alertnotify=echo %%s | mail -s &quot;SumCoin upozornenie&quot; admin
     </message>
     <message>
         <location line="+1"/>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
+        <source></source>
         <translation>Toto je predbežná testovacia zostava - používate na vlastné riziko - nepoužívajte na ťaženie alebo obchodné aplikácie</translation>
     </message>
     <message>

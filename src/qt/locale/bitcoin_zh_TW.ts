@@ -3155,7 +3155,7 @@ for example: alertnotify=echo %%s | mail -s &quot;SumCoin Alert&quot; admin@foo.
     </message>
     <message>
         <location line="+1"/>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
+        <source></source>
         <translation type="unfinished"/>
     </message>
     <message>

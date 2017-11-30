@@ -3190,7 +3190,7 @@ alertnotify=echo %%s | mail -s &quot;SumCoin Alert&quot; admin@foo.com
     </message>
     <message>
         <location line="+1"/>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
+        <source></source>
         <translation>这是一个预发布测试版本 - 风险须自行承担 - 不适用于挖矿或商家应用</translation>
     </message>
     <message>
